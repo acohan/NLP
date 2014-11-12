@@ -4,6 +4,7 @@ Created on Oct 30, 2014
 @author: rmn
 '''
 from numpy import log
+from numpy import logaddexp
 
 path_emit = 'files/emit-cv.txt'
 path_observed = 'files/obs-cvbarbarabarbara.txt'
@@ -98,17 +99,17 @@ def run_forward(observed, emit, trans, tags):
     print marginal
 
 
-def run_viterbi_logbase(observed, emit, trans, tags):
-    table = [{}] * (len(observed))  # initialize marginal probabilities
+def run_fb_logbase(observed, emit, trans, tags):
+    fwd = [{}] * (len(observed) + 2)  # initialize forward table
+    fwd[0] = {t: 1 for t in tags}
     for i in range(len(observed)):
-        if i == 0:
+        if i == 1:
             # initialize
             d = {}
             for t in tags:
-                d[t] = {
-                    'prob': log(trans[('#', t)]) +
-                    log(emit[(t, observed[i])]), 'best': '#'}
-            table[i] = d
+                d[t] = log(trans[('#', t)]) +\
+                    log(emit[(t, observed[i])])
+            fwd[i + 1] = d
         else:
             d = {}
             for t in tags:
@@ -117,30 +118,49 @@ def run_viterbi_logbase(observed, emit, trans, tags):
                     # probs stores the probability of element i to have
                     # tag t given the previous tag is t2
                     # then we use this to maximise
-                    probs[t2] = table[i - 1][t2]['prob'] +\
+                    probs[t2] = log(fwd[i][t2]) + \
                         log(trans[(t2, t)]) + log(emit[(t, observed[i])])
-                a, b = max(
-                    probs.iteritems(), key=lambda x: x[1])
-                d[t] = {'best': a, 'prob': b}
-            table[i] = d
+                a = reduce(logaddexp, probs.values()) 
+#                 a = sum(
+#                     probs.values())
+                d[t] = a
+            fwd[i + 1] = d
+    fwd[len(observed) + 1] = {t:
+                              sum(fwd[len(observed)].values()) for t in tags}
 
-    best_sequence = [{}] * len(observed)
-    best_sequence[len(
-        observed) - 1] = {observed[len(observed) - 1]:
-                          min(table[len(observed) - 1].iteritems(), key=lambda x: x[1])[0]}
-    for i in reversed(range(len(observed) - 1)):
-        best_sequence[i] = {
-            observed[i]:
-            table[i + 1][best_sequence[i + 1].
-                         values()[0]]['best']}
-#     print '\n'.join([observed[i] + ' ' + str(table[i])
-#                      for i in range(len(table))])
-    return best_sequence,\
-        min(table[len(observed) - 1].items(),
-            key=lambda x: x[1]['prob'])[1]['prob']
+    back = [{}] * (len(observed) + 2)  # initialize forward table
+    back[len(observed) + 1] = {t: 1 for t in tags}
+    for i in reversed(range(len(observed))):
+        if i == len(observed):
+            # initialize
+            d = {t: 1 for t in tags}
+            back[i + 1] = d
+        else:
+            d = {}
+            for t in tags:
+                probs = {}
+                for t2 in tags:  # next tag
+                    # probs stores the probability of element i to have
+                    # tag t given the next tag is t2
+                    probs[t2] = back[i+2][t2] * \
+                        trans[(t, t2)] * emit[(t2, observed[i])]
+                a = reduce(logaddexp, probs.values()) 
+                d[t] = a
+            back[i + 1] = d
+    back[0] = {t: sum(back[1].values()) for t in tags}
+    
+    marginal = [{}] * (len(observed)) 
+    for i in range(len(observed)):
+        d = {t:fwd[i+1][t]*back[i+1][t] for t in tags}
+        marginal[i] = d
+        
+    print back[0]
+    print fwd[len(fwd)-1]
+    print marginal
 
 
 if __name__ == '__main__':
     observed, emit, trans, tags = preprocess(
         path_observed, path_emit, path_trans)
     print run_forward(observed, emit, trans, tags)
+    print run_fb_logbase(observed, emit, trans, tags)
