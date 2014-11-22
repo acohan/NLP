@@ -66,12 +66,13 @@ def run_fb(observed, emit, trans, tags):
             d[t] = a
         fwd[i + 1] = d
         tag_set = deepcopy(tags)
-    fwd[len(observed) + 1] = {t: sum(fwd[len(observed)].values()) for t in tags}
+    fwd[len(observed) + 1] = {t:
+                              sum(fwd[len(observed)].values()) for t in tags}
 
     back = [{}] * (len(observed) + 2)  # initialize forward table
     back[len(observed) + 1] = {t: 1 for t in tags}
     back[len(observed)] = {t: 1 for t in tags}
-    for i in reversed(range(len(observed)-1)):
+    for i in reversed(range(len(observed) - 1)):
         d = {}
         for t in tags:
             probs = {}
@@ -79,7 +80,7 @@ def run_fb(observed, emit, trans, tags):
                 # probs stores the probability of element i to have
                 # tag t given the next tag is t2
                 probs[t2] = back[i + 2][t2] * \
-                    trans[(t, t2)] * emit[(t2, observed[i+1])]
+                    trans[(t, t2)] * emit[(t2, observed[i + 1])]
             a = sum(probs.values())
             d[t] = a
         back[i + 1] = d
@@ -90,7 +91,7 @@ def run_fb(observed, emit, trans, tags):
         probs[t2] = back[1][t2] * \
             trans[('#', t2)] * emit[(t2, observed[0])]
     a = sum(probs.values())
-    back[0] = {t: a for t in tags} 
+    back[0] = {t: a for t in tags}
 
     marginal = [{}] * (len(observed))
     input = [{}] * (len(observed) + 2)
@@ -100,15 +101,15 @@ def run_fb(observed, emit, trans, tags):
     input[len(observed) + 1] = '$'
     for i in range(len(observed)):
         print [(fwd[i + 1][t] * back[i + 1][t]) for t in tags]
-        total= sum([(fwd[i + 1][t] * back[i + 1][t]) for t in tags])
-        d = {t: (fwd[i + 1][t] * back[i + 1][t])/float(total) for t in tags}
+        total = sum([(fwd[i + 1][t] * back[i + 1][t]) for t in tags])
+        d = {t: (fwd[i + 1][t] * back[i + 1][t]) / float(total) for t in tags}
         marginal[i] = d
-# 
+#
 #     marginal = [{}] * (len(observed))
 #     input = [{}] * (len(observed) + 2)
 #     for i in range(len(observed)):
 #         input[i + 1] = observed[i]
-#     input[0] = '#'
+# input[0] = '#'
 #     input[len(observed) + 1] = '$'
 #     for i in range(len(observed)):
 #         d = {t: fwd[i + 1][t] + back[i + 1][t] for t in tags}
@@ -154,25 +155,25 @@ def run_fb_logbase(observed, emit, trans, tags):
     back = [{}] * (len(observed) + 2)  # initialize forward table
     back[len(observed) + 1] = {t: log(1) for t in tags}
     back[len(observed)] = {t: log(1) for t in tags}
-    for i in reversed(range(len(observed)-1)):
-            d = {}
-            for t in tags:
-                probs = {}
-                for t2 in tags:  # next tag
-                    # probs stores the probability of element i to have
-                    # tag t given the next tag is t2
-                    probs[t2] = back[i + 2][t2] + \
-                        log(trans[(t, t2)]) + log(emit[(t2, observed[i+1])])
-                a = reduce(logaddexp, probs.values())
-                d[t] = a
-            back[i + 1] = d
+    for i in reversed(range(len(observed) - 1)):
+        d = {}
+        for t in tags:
+            probs = {}
+            for t2 in tags:  # next tag
+                # probs stores the probability of element i to have
+                # tag t given the next tag is t2
+                probs[t2] = back[i + 2][t2] + \
+                    log(trans[(t, t2)]) + log(emit[(t2, observed[i + 1])])
+            a = reduce(logaddexp, probs.values())
+            d[t] = a
+        back[i + 1] = d
     for t2 in tags:  # next tag
         # probs stores the probability of element i to have
         # tag t given the next tag is t2
         probs[t2] = back[1][t2] + \
             log(trans[('#', t2)]) + log(emit[(t2, observed[0])])
     a = reduce(logaddexp, probs.values())
-    back[0] = {t: a for t in tags} 
+    back[0] = {t: a for t in tags}
 
     marginal = [{}] * (len(observed))
     input = [{}] * (len(observed) + 2)
@@ -181,8 +182,9 @@ def run_fb_logbase(observed, emit, trans, tags):
     input[0] = '#'
     input[len(observed) + 1] = '$'
     for i in range(len(observed)):
-        print reduce(logaddexp, [fwd[i + 1][t]+back[i + 1][t] for t in tags])
-        total= reduce(logaddexp, [fwd[i + 1][t]+back[i + 1][t] for t in tags])
+        print reduce(logaddexp, [fwd[i + 1][t] + back[i + 1][t] for t in tags])
+        total = reduce(
+            logaddexp, [fwd[i + 1][t] + back[i + 1][t] for t in tags])
         d = {t: (fwd[i + 1][t] + back[i + 1][t]) - total for t in tags}
         marginal[i] = d
 
@@ -190,12 +192,11 @@ def run_fb_logbase(observed, emit, trans, tags):
 #     input = [{}] * (len(observed) + 2)
 #     for i in range(len(observed)):
 #         input[i + 1] = observed[i]
-#     input[0] = '#'
+# input[0] = '#'
 #     input[len(observed) + 1] = '$'
 #     for i in range(len(observed)):
 #         d = {t: fwd[i + 1][t] + back[i + 1][t] for t in tags}
 #         marginal[i] = d
-
     print "---- Forward Neg. Log. probabilities: ----- "
     print tabulate(zip(input, fwd))
     print "---- Backward Neg. Log. probabilities: ----- "
@@ -208,8 +209,8 @@ def run_fb_logbase(observed, emit, trans, tags):
 if __name__ == '__main__':
     observed, emit, trans, tags = preprocess(
         path_observed, path_emit, path_trans)
-    fwd,back,marginal = run_fb(observed, emit, trans, tags)
-    fwd1,back1,marginal1 = run_fb_logbase(observed, emit, trans, tags)
-    print marginal
-    for t in marginal1:
-        print {k: exp(v) for k,v in t.iteritems()}
+    fwd, back, marginal = run_fb(observed, emit, trans, tags)
+    fwd1, back1, marginal1 = run_fb_logbase(observed, emit, trans, tags)
+#     print marginal
+#     for t in marginal1:
+#         print {k: exp(v) for k,v in t.iteritems()}
