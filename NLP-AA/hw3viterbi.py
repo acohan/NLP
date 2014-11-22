@@ -6,10 +6,10 @@ Created on Oct 30, 2014
 from numpy import log
 from tabulate import tabulate
 
-# path_emit = 'files/emit-cv.txt'
-path_emit = 'files/emit-cv-em.txt'
-# path_trans = 'files/trans-cv.txt'
-path_trans = 'files/trans-cv-em.txt'
+path_emit = 'files/emit-cv.txt'
+# path_emit = 'files/emit-cv-em.txt'
+path_trans = 'files/trans-cv.txt'
+# path_trans = 'files/trans-cv-em.txt'
 path_observed = 'files/obs-cvbarbarabarbara.txt'
 
 
@@ -34,29 +34,6 @@ def preprocess(path_observed, path_emit, path_trans, tags={'C', 'V'}):
     line = open(path_observed, 'rb').read().split('\n')[0]
     observed = line.split(' ')[:-1]
     return observed, emit, trans, tags
-
-# print observed
-# print trans
-
-
-def max_label(elements):
-    maxx = -1
-    max_lbl = ''
-    for k, v in elements.iteritems():
-        if v['prob'] > maxx:
-            maxx = v['prob']
-            max_lbl = k
-    return max_lbl
-
-
-def min_label(elements):
-    minn = 1000000
-    min_lbl = ''
-    for k, v in elements.iteritems():
-        if v['prob'] < minn:
-            minn = v['prob']
-            min_lbl = k
-    return min_lbl
 
 
 def run_viterbi(observed, emit, trans, tags, verbose=False):

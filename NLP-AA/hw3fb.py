@@ -41,15 +41,6 @@ def preprocess(path_observed, path_emit, path_trans, tags={'C', 'V'}):
     observed = line.split(' ')[:-1]
     return observed, emit, trans, tags
 
-# print observed
-# print trans
-
-'''
-Forward Backward
-params:
- 
-'''
-
 
 def run_fb(observed, emit, trans, tags):
     """
