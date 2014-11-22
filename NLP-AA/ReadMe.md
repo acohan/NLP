@@ -34,4 +34,5 @@ The reason for that is that the transition probabilities from the first step of 
 ##3. How does the total forward/backward probability change?
 The total fw/bw probability also increases substantially. From 7.661059866669876e-17 to 0.0023143346408825037. The same argument applies here as well.
 
-
+##Results:
+All results are included in the results.txt file.
