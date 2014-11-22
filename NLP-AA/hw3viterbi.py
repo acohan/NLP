@@ -57,7 +57,7 @@ def min_label(elements):
     return min_lbl
 
 
-def run_viterbi(observed, emit, trans, tags):
+def run_viterbi(observed, emit, trans, tags, verbose=False):
     table = [{}] * (len(observed))  # initialize marginal probabilities
     for i in range(len(observed)):
         if i == 0:
@@ -92,11 +92,13 @@ def run_viterbi(observed, emit, trans, tags):
             observed[i]:
             table[i + 1][best_sequence[i + 1].
                          values()[0]]['best_prev']}
+    if verbose:
+        print tabulate(table)
     return best_sequence,\
         max(table[len(observed) - 1].items(), key=lambda x:x[1]['prob'])[1]['prob']
 
 
-def run_viterbi_logbase(observed, emit, trans, tags):
+def run_viterbi_logbase(observed, emit, trans, tags, verbose=False):
     table = [{}] * (len(observed))  # initialize marginal probabilities
     for i in range(len(observed)):
         if i == 0:
@@ -131,15 +133,16 @@ def run_viterbi_logbase(observed, emit, trans, tags):
             observed[i]:
             table[i + 1][best_sequence[i + 1].
                          values()[0]]['best_prev']}
-    print tabulate(table)
+    if verbose:
+        print tabulate(table)
     return best_sequence,\
         max(table[len(observed) - 1].items(), key=lambda x:x[1]['prob'])[1]['prob']
 
 
 if __name__ == '__main__':
     observed, emit, trans, tags = preprocess(
-        path_observed, path_emit, path_trans)
+        path_observed, path_emit, path_trans, verbose=False)
     print "Best Sequence: %s \n Probability: %s " %\
         run_viterbi(observed, emit, trans, tags)
     print "Best Sequence: %s \n Neg Log Probability: %s " %\
-        run_viterbi_logbase(observed, emit, trans, tags)
+        run_viterbi_logbase(observed, emit, trans, tags, verbose=False)
