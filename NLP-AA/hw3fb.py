@@ -10,9 +10,9 @@ from copy import deepcopy
 
 from tabulate import tabulate
 
-path_emit = 'files/emit-cv.txt'
+path_emit = 'files/emit-cv-em.txt'
 path_observed = 'files/obs-cvbarbarabarbara.txt'
-path_trans = 'files/trans-cv.txt'
+path_trans = 'files/trans-cv-em.txt'
 start_character = '#'
 end_character = '$'
 
@@ -100,7 +100,6 @@ def run_fb(observed, emit, trans, tags):
     input[0] = '#'
     input[len(observed) + 1] = '$'
     for i in range(len(observed)):
-        print [(fwd[i + 1][t] * back[i + 1][t]) for t in tags]
         total = sum([(fwd[i + 1][t] * back[i + 1][t]) for t in tags])
         d = {t: (fwd[i + 1][t] * back[i + 1][t]) / float(total) for t in tags}
         marginal[i] = d
@@ -182,7 +181,6 @@ def run_fb_logbase(observed, emit, trans, tags):
     input[0] = '#'
     input[len(observed) + 1] = '$'
     for i in range(len(observed)):
-        print reduce(logaddexp, [fwd[i + 1][t] + back[i + 1][t] for t in tags])
         total = reduce(
             logaddexp, [fwd[i + 1][t] + back[i + 1][t] for t in tags])
         d = {t: (fwd[i + 1][t] + back[i + 1][t]) - total for t in tags}
