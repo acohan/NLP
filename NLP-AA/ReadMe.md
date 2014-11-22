@@ -19,6 +19,7 @@ run_fb_logbase
 
 ##Problem 3. EM
 The updated spreadsheet is included in the file/cvbar_spreadsheet(1).xlsx
+Note: Please see Sheet 2 of the spreadsheet. 
 Now instead of only values, the formulas for 1 step of the EM are included.
 The transition and emission estimate from this 1 step are then included in input files: emit-cv-em.txt and trans-cv-em.txt
 
