@@ -10,9 +10,11 @@ from copy import deepcopy
 
 from tabulate import tabulate
 
-path_emit = 'files/emit-cv-em.txt'
+path_emit = 'files/emit-cv.txt'
+# path_emit = 'files/emit-cv-em.txt'
+path_trans = 'files/trans-cv.txt'
+# path_trans = 'files/trans-cv-em.txt'
 path_observed = 'files/obs-cvbarbarabarbara.txt'
-path_trans = 'files/trans-cv-em.txt'
 start_character = '#'
 end_character = '$'
 
@@ -42,8 +44,25 @@ def preprocess(path_observed, path_emit, path_trans, tags={'C', 'V'}):
 # print observed
 # print trans
 
+'''
+Forward Backward
+params:
+ 
+'''
+
 
 def run_fb(observed, emit, trans, tags):
+    """
+    Forward Backward
+    Returns table of forward, backward and marginal probs
+    :arg observed: the observed sequence list
+    :arg emit: emission probabilities, format:
+        {('hidden1','observed1'): 0.4, ...}
+    :arg trans: transition probabilities, format:
+        {('hidden1','hidden2'): 0.4, ...}
+    :arg tags: a set of hidden variables, eg. set('C','V')
+
+    """
     fwd = [{}] * (len(observed) + 2)  # initialize forward table
     fwd[0] = {t: 1 for t in tags}
     fwd[0]['#'] = 1
@@ -103,20 +122,7 @@ def run_fb(observed, emit, trans, tags):
         total = sum([(fwd[i + 1][t] * back[i + 1][t]) for t in tags])
         d = {t: (fwd[i + 1][t] * back[i + 1][t]) / float(total) for t in tags}
         marginal[i] = d
-#
-#     marginal = [{}] * (len(observed))
-#     input = [{}] * (len(observed) + 2)
-#     for i in range(len(observed)):
-#         input[i + 1] = observed[i]
-# input[0] = '#'
-#     input[len(observed) + 1] = '$'
-#     for i in range(len(observed)):
-#         d = {t: fwd[i + 1][t] + back[i + 1][t] for t in tags}
-#         marginal[i] = d
 
-#    print back[0]
-#    print fwd[len(fwd) - 1]
-#    print marginal
     print "---- Forward probabilities: ----- "
     print tabulate(zip(input, fwd))
     print "---- Backward probabilities: ----- "
@@ -127,6 +133,17 @@ def run_fb(observed, emit, trans, tags):
 
 
 def run_fb_logbase(observed, emit, trans, tags):
+    """
+    Forward Backward in logarithmic space
+    Returns table of forward, backward and marginal negative log probs
+    :arg observed: the observed sequence list
+    :arg emit: emission probabilities, format:
+        {('hidden1','observed1'): 0.4, ...}
+    :arg trans: transition probabilities, format:
+        {('hidden1','hidden2'): 0.4, ...}
+    :arg tags: a set of hidden variables, eg. set('C','V')
+
+    """
     fwd = [{}] * (len(observed) + 2)  # initialize forward table
     fwd[0] = {t: log(1) for t in tags}
     fwd[0]['#'] = log(1)
@@ -206,6 +223,8 @@ def run_fb_logbase(observed, emit, trans, tags):
 
 if __name__ == '__main__':
     observed, emit, trans, tags = preprocess(
+        path_observed, path_emit, path_trans)
+    print preprocess(
         path_observed, path_emit, path_trans)
     fwd, back, marginal = run_fb(observed, emit, trans, tags)
     fwd1, back1, marginal1 = run_fb_logbase(observed, emit, trans, tags)
