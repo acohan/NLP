@@ -1,7 +1,25 @@
+#Viterbi
+##Results for the orginal emission and transition probabilies:
+Best Sequence: [{'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'a': 'V'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'a': 'V'}] 
+ Probability: 3.65989380422e-17 
+Best Sequence: [{'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'a': 'V'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'a': 'V'}] 
+ Neg Log Probability: -37.8465124491 
+ 
+##Results for the estimated emission and transition probabilies (From EM):
+Best Sequence: [{'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'a': 'V'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'a': 'V'}] 
+ Probability: 0.00207508392659 
+Best Sequence: [{'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'a': 'V'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'b': 'C'}, {'a': 'V'}, {'r': 'C'}, {'a': 'V'}] 
+ Neg Log Probability: -6.17775367957 
+
+
+
+
 #Forward backward
 ##Results for the original emit and transition probabilities:
 
 ---- Forward probabilities: ----- 
+---------------------------------
+-----Total fw/bw prob: 7.661059866669877e-17
 -  ----------------------------------------------------------
 \#  {'C': 1, '#': 1, 'V': 1}
 b  {'C': 0.063, 'V': 0.003}

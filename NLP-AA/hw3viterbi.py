@@ -6,9 +6,11 @@ Created on Oct 30, 2014
 from numpy import log
 from tabulate import tabulate
 
-path_emit = 'files/emit-cv.txt'
+# path_emit = 'files/emit-cv.txt'
+path_emit = 'files/emit-cv-em.txt'
+# path_trans = 'files/trans-cv.txt'
+path_trans = 'files/trans-cv-em.txt'
 path_observed = 'files/obs-cvbarbarabarbara.txt'
-path_trans = 'files/trans-cv.txt'
 
 
 def preprocess(path_observed, path_emit, path_trans, tags={'C', 'V'}):
@@ -95,7 +97,8 @@ def run_viterbi(observed, emit, trans, tags, verbose=False):
     if verbose:
         print tabulate(table)
     return best_sequence,\
-        max(table[len(observed) - 1].items(), key=lambda x:x[1]['prob'])[1]['prob']
+        max(table[len(observed) - 1].items(),
+            key=lambda x: x[1]['prob'])[1]['prob']
 
 
 def run_viterbi_logbase(observed, emit, trans, tags, verbose=False):
@@ -136,13 +139,14 @@ def run_viterbi_logbase(observed, emit, trans, tags, verbose=False):
     if verbose:
         print tabulate(table)
     return best_sequence,\
-        max(table[len(observed) - 1].items(), key=lambda x:x[1]['prob'])[1]['prob']
+        max(table[len(observed) - 1].items(),
+            key=lambda x: x[1]['prob'])[1]['prob']
 
 
 if __name__ == '__main__':
     observed, emit, trans, tags = preprocess(
-        path_observed, path_emit, path_trans, verbose=False)
+        path_observed, path_emit, path_trans)
     print "Best Sequence: %s \n Probability: %s " %\
-        run_viterbi(observed, emit, trans, tags)
+        run_viterbi(observed, emit, trans, tags, verbose=False)
     print "Best Sequence: %s \n Neg Log Probability: %s " %\
         run_viterbi_logbase(observed, emit, trans, tags, verbose=False)
