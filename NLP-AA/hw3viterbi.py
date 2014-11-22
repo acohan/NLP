@@ -4,6 +4,7 @@ Created on Oct 30, 2014
 @author: rmn
 '''
 from numpy import log
+from tabulate import tabulate
 
 path_emit = 'files/emit-cv.txt'
 path_observed = 'files/obs-cvbarbarabarbara.txt'
@@ -65,7 +66,7 @@ def run_viterbi(observed, emit, trans, tags):
             for t in tags:
                 d[t] = {
                     'prob': trans[('#', t)] *
-                    emit[(t, observed[i])], 'best': '#'}
+                    emit[(t, observed[i])], 'best_prev': '#'}
             table[i] = d
         else:
             d = {}
@@ -79,7 +80,7 @@ def run_viterbi(observed, emit, trans, tags):
                         trans[(t2, t)] * emit[(t, observed[i])]
                 a, b = max(
                     probs.iteritems(), key=lambda x: x[1])
-                d[t] = {'best': a, 'prob': b}
+                d[t] = {'best_prev': a, 'prob': b}
             table[i] = d
 
     best_sequence = [{}] * len(observed)
@@ -90,9 +91,7 @@ def run_viterbi(observed, emit, trans, tags):
         best_sequence[i] = {
             observed[i]:
             table[i + 1][best_sequence[i + 1].
-                         values()[0]]['best']}
-#     print '\n'.join([observed[i] + ' ' + str(table[i])
-#                      for i in range(len(table))])]
+                         values()[0]]['best_prev']}
     return best_sequence,\
         max(table[len(observed) - 1].items(), key=lambda x:x[1]['prob'])[1]['prob']
 
@@ -106,7 +105,7 @@ def run_viterbi_logbase(observed, emit, trans, tags):
             for t in tags:
                 d[t] = {
                     'prob': log(trans[('#', t)]) +
-                    log(emit[(t, observed[i])]), 'best': '#'}
+                    log(emit[(t, observed[i])]), 'best_prev': '#'}
             table[i] = d
         else:
             d = {}
@@ -120,28 +119,27 @@ def run_viterbi_logbase(observed, emit, trans, tags):
                         log(trans[(t2, t)]) + log(emit[(t, observed[i])])
                 a, b = max(
                     probs.iteritems(), key=lambda x: x[1])
-                d[t] = {'best': a, 'prob': b}
+                d[t] = {'best_prev': a, 'prob': b}
             table[i] = d
 
     best_sequence = [{}] * len(observed)
     best_sequence[len(
         observed) - 1] = {observed[len(observed) - 1]:
-                          min(table[len(observed) - 1].iteritems(), key=lambda x: x[1])[0]}
+                          max(table[len(observed) - 1].iteritems(), key=lambda x: x[1])[0]}
     for i in reversed(range(len(observed) - 1)):
         best_sequence[i] = {
             observed[i]:
             table[i + 1][best_sequence[i + 1].
-                         values()[0]]['best']}
-#     print '\n'.join([observed[i] + ' ' + str(table[i])
-#                      for i in range(len(table))])
+                         values()[0]]['best_prev']}
+    print tabulate(table)
     return best_sequence,\
-        min(table[len(observed) - 1].items(), key=lambda x:x[1]['prob'])[1]['prob']
+        max(table[len(observed) - 1].items(), key=lambda x:x[1]['prob'])[1]['prob']
 
 
 if __name__ == '__main__':
     observed, emit, trans, tags = preprocess(
         path_observed, path_emit, path_trans)
-    print "Sequence: %s \n Probability: %s " %\
+    print "Best Sequence: %s \n Probability: %s " %\
         run_viterbi(observed, emit, trans, tags)
-    print "Sequence: %s \n Neg Log Probability: %s " %\
+    print "Best Sequence: %s \n Neg Log Probability: %s " %\
         run_viterbi_logbase(observed, emit, trans, tags)
